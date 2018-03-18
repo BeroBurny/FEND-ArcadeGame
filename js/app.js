@@ -26,16 +26,24 @@ Enemy.prototype.render = function() {
 // a handleInput() method.
 class Player {
 	constructor() {
+		this.x = 200;
+		this.y = 380;
+		this.sprite = 'images/char-boy.png';
 		console.log("Player Created");
 	}
-	update(delta) {
+	update() {
 
 	}
 	render() {
-
+		ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 	}
 	handleInput(key) {
-		console.log(key);
+		if (key != undefined ) {
+			if(key === "up" && this.y > 0) this.y -= 83;
+			else if (key === "down" && this.y < 380) this.y += 83;
+			else if (key === "left" && this.x > 0) this.x -= 100;
+			else if (key === "right" && this.x < 400) this.x += 100;
+		}
 	}
 }
 
