@@ -32,7 +32,7 @@ class Enemy {
 // a handleInput() method.
 class Player {
 	constructor() {
-		this.x = 200;
+		this.x = 202;
 		this.y = 380;
 		this.sprite = 'images/char-boy.png';
 		console.log("Player Created");
@@ -47,8 +47,8 @@ class Player {
 		if (key != undefined ) {
 			if(key === "up" && this.y > 0) this.y -= 83;
 			else if (key === "down" && this.y < 380) this.y += 83;
-			else if (key === "left" && this.x > 0) this.x -= 100;
-			else if (key === "right" && this.x < 400) this.x += 100;
+			else if (key === "left" && this.x > 0) this.x -= 101;
+			else if (key === "right" && this.x < 400) this.x += 101;
 		}
 	}
 }
