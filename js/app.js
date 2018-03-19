@@ -1,14 +1,16 @@
 // Enemies our player must avoid
 class Enemy {
-	constructor() {
+	constructor(row = getRandomInt(4), side = getRandomInt(2), speed = getRandomInt(100)) {
 		// Variables applied to each of our instances go here,
 		// we've provided one for you to get started
 
 		// The image/sprite for our enemies, this uses
 		// a helper we've provided to easily load images
 		this.y = (row * 83) + 62; // row 62 + row * 83
-		this.x = -90;
-		this.sprite = 'images/enemy-bug.png';
+		this.leftSpawn = side === 1? true: false;
+		this.leftSpawn ? this.x = -90: this.x = 500;
+		this.speed = 100 + speed;
+		this.sprite = this.leftSpawn ? 'images/enemy-bug.png': 'images/enemy-bug-left.png';
 	}
 
 	// Update the enemy's position, required method for game
@@ -17,8 +19,13 @@ class Enemy {
 		// You should multiply any movement by the dt parameter
 		// which will ensure the game runs at the same speed for
 		// all computers.
-		if(this.x < 500)
-			this.x += 100 * dt;
+		if (this.leftSpawn) {
+			if(this.x < 500)
+				this.x += this.speed * dt;
+		} else {
+			if(this.x > -100)
+				this.x -= this.speed * dt;
+		}
 
 	}
 	// Draw the enemy on the screen, required method for game
@@ -57,7 +64,7 @@ class Player {
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
-var allEnemies = [new Enemy()];
+var allEnemies = [new Enemy(), new Enemy(), new Enemy(), new Enemy(), new Enemy()];
 var player = new Player();
 
 // This listens for key presses and sends the keys to your
@@ -72,3 +79,7 @@ document.addEventListener('keyup', function(e) {
 
 	player.handleInput(allowedKeys[e.keyCode]);
 });
+
+function getRandomInt(max) {
+	return Math.floor(Math.random() * Math.floor(max));
+}
