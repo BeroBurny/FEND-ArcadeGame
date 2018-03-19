@@ -1,15 +1,12 @@
-// Enemies our player must avoid
+// Enemies Class (our player must avoid)
 class Enemy {
 	constructor(row = getRandomInt(4), side = getRandomInt(2), speed = getRandomInt(100)) {
-		// Variables applied to each of our instances go here,
-		// we've provided one for you to get started
 
-		// The image/sprite for our enemies, this uses
-		// a helper we've provided to easily load images
 		this.y = (row * 83) + 62; // row 62 + row * 83
 		this.leftSpawn = side === 1? true: false;
 		this.leftSpawn ? this.x = -90: this.x = 500;
 		this.speed = 100 + speed;
+		// The image/sprite for our enemies, based on enemy orijentation
 		this.sprite = this.leftSpawn ? 'images/enemy-bug.png': 'images/enemy-bug-left.png';
 	}
 
@@ -34,10 +31,9 @@ class Enemy {
 	}
 }
 
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
+// Player Class
 class Player {
+	// Player constructor
 	constructor() {
 		this.x = 202;
 		this.y = 380;
@@ -80,6 +76,8 @@ document.addEventListener('keyup', function(e) {
 	player.handleInput(allowedKeys[e.keyCode]);
 });
 
+// Generate random Integer
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
 function getRandomInt(max) {
 	return Math.floor(Math.random() * Math.floor(max));
 }
