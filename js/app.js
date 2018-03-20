@@ -78,6 +78,10 @@ class Player {
 class Game {
 	constructor() {
 		this.enemyRows = [0, 0, 0, 0];
+		this.life = 3;
+		this.level = 1;
+		this.score = 0;
+		this.delay = 0;
 	}
 	update(dt) {
 		const enemys = allEnemies.length;
