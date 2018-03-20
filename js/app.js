@@ -233,8 +233,8 @@ class Game {
 
 	checkPlayerColision(x, y) {
 		if(player.y === y - 14) {
-			const plx = player.x + 25;
-			if ((x <= plx && plx <= (x + 100)) || (x <= (plx + 50) && (plx + 50) <= (x + 100))) { //
+			const plx = player.x + 35;
+			if ((x <= plx && plx <= (x + 100)) || (x <= (plx + 30) && (plx + 30) <= (x + 100))) { //
 				if(this.life === 0) this.gameOver = true;
 				else this.life--;
 				player.alive = false;
