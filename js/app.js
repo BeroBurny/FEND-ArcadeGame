@@ -56,12 +56,15 @@ class Player {
 		this.sprite = 'images/char-boy.png';
 		console.log("Player Created");
 	}
+
 	update() {
 
 	}
+
 	render() {
 		ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 	}
+
 	handleInput(key) {
 		if (key != undefined ) {
 			if(key === "up" && this.y > 0 && this.ready) this.y -= 83;
@@ -71,6 +74,11 @@ class Player {
 
 			if(!this.ready && key === "space") this.ready = true;
 		}
+	}
+
+	respawn() {
+		this.x = 202;
+		this.y = 380;
 	}
 }
 
@@ -164,7 +172,8 @@ class Game {
 		if(player.y === y - 14) {
 			const plx = player.x + 25;
 			if ((x <= plx && plx <= (x + 100)) || (x <= (plx + 50) && (plx + 50) <= (x + 100))) { //
-				// colision response over here
+				this.life--;
+				player.respawn();
 			}
 		}
 	}
@@ -180,7 +189,7 @@ var game = new Game();
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
-document.addEventListener('keyup', function(e) {
+document.addEventListener('keydown', function(e) {
 	var allowedKeys = {
 		32: 'space',
 		37: 'left',
