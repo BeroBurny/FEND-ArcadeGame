@@ -1,11 +1,18 @@
 // Enemies Class (our player must avoid)
 class Enemy {
 	constructor(row = getRandomInt(4), side = getRandomInt(2), speed = getRandomInt(100)) {
+		// Limit only to 2 bugs per row
+		while(game.enemyRows[row] >= 2) {
+			row = getRandomInt(4);
+		}
 
 		this.y = (row * 83) + 62; // row 62 + row * 83
 		this.leftSpawn = side === 1? true: false;
 		this.leftSpawn ? this.x = -90: this.x = 500;
 		this.speed = 100 + speed;
+
+		this.row = row;
+		game.enemyRows[row]++;
 		// The image/sprite for our enemies, based on enemy orijentation
 		this.sprite = this.leftSpawn ? 'images/enemy-bug.png': 'images/enemy-bug-left.png';
 	}
@@ -19,9 +26,17 @@ class Enemy {
 		if (this.leftSpawn) {
 			if(this.x < 500)
 				this.x += this.speed * dt;
+			else {
+				game.enemyRows[this.row]--;
+				allEnemies.splice(allEnemies.indexOf(this), 1);
+			}
 		} else {
 			if(this.x > -100)
 				this.x -= this.speed * dt;
+			else {
+				game.enemyRows[this.row]--;
+				allEnemies.splice(allEnemies.indexOf(this), 1);
+			}
 		}
 		game.checkPlayerColision(this.x, this.y);
 	}
@@ -62,9 +77,17 @@ class Player {
 // Game class
 class Game {
 	constructor() {
-
+		this.enemyRows = [0, 0, 0, 0];
 	}
 	update(dt) {
+		const enemys = allEnemies.length;
+		if(this.delay >= 100){
+			if(player.ready && enemys < (3 + this.level)) allEnemies.push(new Enemy());
+			else if (!player.ready  && enemys < 3) allEnemies.push(new Enemy(getRandomInt(3)));
+			this.delay -= 100;
+		}
+		this.delay += dt * 200;
+
 	}
 	render() {
 
@@ -138,7 +161,7 @@ class Game {
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
-var allEnemies = [new Enemy(), new Enemy(), new Enemy(), new Enemy(), new Enemy()];
+var allEnemies = [];
 var player = new Player();
 var game = new Game();
 
@@ -159,5 +182,5 @@ document.addEventListener('keyup', function(e) {
 // Generate random Integer
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
 function getRandomInt(max) {
-	return Math.floor(Math.random() * Math.floor(max));
+	return Math.floor(Math.random(new Date().getTime()) * Math.floor(max));
 }
