@@ -140,7 +140,8 @@ var Engine = (function(global) {
 
 		renderEntities();
 		if(player.ready) game.render();
-		if(!player.alive) game.renderHit();
+		if(!player.alive && !game.gameOver) game.renderHit();
+		else if (game.gameOver) game.renderOver();
 		if(!player.ready) game.renderMenu();
 	}
 

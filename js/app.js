@@ -76,7 +76,8 @@ class Player {
 
 				if(!this.ready && key === "space") this.ready = true;
 			} else {
-				if(key === "space") player.respawn();
+				if(key === "space" && !game.gameOver) player.respawn();
+				else if(key === "space" && game.gameOver) game.restartGame();
 			}
 		}
 	}
@@ -85,8 +86,8 @@ class Player {
 		this.x = 202;
 		this.y = 380;
 		this.alive = true;
-		allEnemies = [];
-		game.enemyRows = [0, 0, 0, 0];
+		// allEnemies = [];
+		// game.enemyRows = [0, 0, 0, 0];
 	}
 }
 
@@ -94,11 +95,13 @@ class Player {
 class Game {
 	constructor() {
 		this.enemyRows = [0, 0, 0, 0];
+		this.gameOver = false;
 		this.life = 3;
 		this.level = 1;
 		this.score = 0;
 		this.delay = 0;
 	}
+
 	update(dt) {
 		const enemys = allEnemies.length;
 		if(this.delay >= 100){
@@ -109,6 +112,7 @@ class Game {
 		this.delay += dt * 200;
 
 	}
+
 	render() {
 		ctx.font = "25px Arial";
 		ctx.fillText("Life:",20,45);
@@ -120,6 +124,23 @@ class Game {
 		if(this.life === 3) ctx.drawImage(Resources.get("images/Heart.png"), 130, 10, 30,47);
 		if(this.life > 3) this.life = 0;
 	}
+
+	renderOver() {
+		ctx.font = "45px Arial";
+
+		// white text for background
+		ctx.fillStyle = "white";
+		// show how to start game
+		ctx.fillText("Press \"space\" to restart!",15,520);
+
+		// text color to black
+		ctx.fillStyle = "black";
+		// game ower
+		ctx.fillText("GAME OWER",115,110);
+		// show how to start game stroke
+		ctx.strokeText("Press \"space\" to restart!",15,520);
+	}
+
 	renderHit() {
 		ctx.font = "45px Arial";
 		// white text for background
@@ -144,6 +165,7 @@ class Game {
 		ctx.strokeText("Press \"space\" to retry!",40,520);
 		ctx.drawImage(Resources.get("images/Heart.png"), 360, 70, 50,79);
 	}
+
 	renderMenu() {
 		// set text overlay
 		ctx.font = "45px Arial";
@@ -200,11 +222,21 @@ class Game {
 		ctx.drawImage(Resources.get("images/char-cat-girl.png"), 339, 143);
 	}
 
+	restartGame() {
+		this.gameOver = false;
+		player.respawn();
+		this.life = 3;
+		this.level = 1;
+		this.score = 0;
+		player.ready = false;
+	}
+
 	checkPlayerColision(x, y) {
 		if(player.y === y - 14) {
 			const plx = player.x + 25;
 			if ((x <= plx && plx <= (x + 100)) || (x <= (plx + 50) && (plx + 50) <= (x + 100))) { //
-				this.life--;
+				if(this.life === 0) this.gameOver = true;
+				else this.life--;
 				player.alive = false;
 			}
 		}
