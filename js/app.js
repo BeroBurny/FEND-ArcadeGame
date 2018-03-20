@@ -56,12 +56,25 @@ class Player {
 	}
 }
 
+// Game class
+class Game {
+	constructor() {
+
+	}
+	update(dt) {
+	}
+	render() {
+
+	}
+}
+
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
 var allEnemies = [new Enemy(), new Enemy(), new Enemy(), new Enemy(), new Enemy()];
 var player = new Player();
+var game = new Game();
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
