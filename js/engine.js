@@ -79,7 +79,7 @@ var Engine = (function(global) {
 	 */
 	function update(dt) {
 		updateEntities(dt);
-		game.update(dt);
+		if(player.alive) game.update(dt);
 	}
 
 	/* This is called by the update function and loops through all of the
@@ -91,7 +91,7 @@ var Engine = (function(global) {
 	 */
 	function updateEntities(dt) {
 		allEnemies.forEach(function(enemy) {
-			enemy.update(dt);
+			if(player.alive) enemy.update(dt);
 		});
 		player.update();
 	}
@@ -139,8 +139,9 @@ var Engine = (function(global) {
 		}
 
 		renderEntities();
-		if (player.ready) game.render();
-		if (!player.ready) game.renderMenu();
+		if(player.ready) game.render();
+		if(!player.alive) game.renderHit();
+		if(!player.ready) game.renderMenu();
 	}
 
 	/* This function is called by the render function and is called on each game

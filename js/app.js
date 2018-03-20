@@ -51,6 +51,7 @@ class Player {
 	// Player constructor
 	constructor() {
 		this.ready = false;
+		this.alive = true;
 		this.x = 202;
 		this.y = 380;
 		this.sprite = 'images/char-boy.png';
@@ -67,18 +68,25 @@ class Player {
 
 	handleInput(key) {
 		if (key != undefined ) {
-			if(key === "up" && this.y > 0 && this.ready) this.y -= 83;
-			else if (key === "down" && this.y < 380) this.y += 83;
-			else if (key === "left" && this.x > 0) this.x -= 101;
-			else if (key === "right" && this.x < 400) this.x += 101;
+			if(this.alive) {
+				if(key === "up" && this.y > 0 && this.ready) this.y -= 83;
+				else if (key === "down" && this.y < 380) this.y += 83;
+				else if (key === "left" && this.x > 0) this.x -= 101;
+				else if (key === "right" && this.x < 400) this.x += 101;
 
-			if(!this.ready && key === "space") this.ready = true;
+				if(!this.ready && key === "space") this.ready = true;
+			} else {
+				if(key === "space") player.respawn();
+			}
 		}
 	}
 
 	respawn() {
 		this.x = 202;
 		this.y = 380;
+		this.alive = true;
+		allEnemies = [];
+		game.enemyRows = [0, 0, 0, 0];
 	}
 }
 
@@ -111,6 +119,30 @@ class Game {
 		if(this.life >= 2) ctx.drawImage(Resources.get("images/Heart.png"), 100, 10, 30,47);
 		if(this.life === 3) ctx.drawImage(Resources.get("images/Heart.png"), 130, 10, 30,47);
 		if(this.life > 3) this.life = 0;
+	}
+	renderHit() {
+		ctx.font = "45px Arial";
+		// white text for background
+		ctx.fillStyle = "white";
+		// collect info
+		ctx.fillText("You lost one!",90,130);
+		// show how to start game
+		ctx.fillText("Press \"space\" to retry!",40,520);
+
+		// red text for background
+		ctx.fillStyle = "red";
+		// info about enemy
+		ctx.fillText("Something hit you!",65,85);
+
+		// text stroke color
+		ctx.fillStyle = "black";
+		// collect info stroke
+		ctx.strokeText("Something hit you!",65,85);
+		// collect info stroke
+		ctx.strokeText("You lost one!",90,130);
+		// show how to start game stroke
+		ctx.strokeText("Press \"space\" to retry!",40,520);
+		ctx.drawImage(Resources.get("images/Heart.png"), 360, 70, 50,79);
 	}
 	renderMenu() {
 		// set text overlay
@@ -173,7 +205,7 @@ class Game {
 			const plx = player.x + 25;
 			if ((x <= plx && plx <= (x + 100)) || (x <= (plx + 50) && (plx + 50) <= (x + 100))) { //
 				this.life--;
-				player.respawn();
+				player.alive = false;
 			}
 		}
 	}
