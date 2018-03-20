@@ -35,6 +35,7 @@ class Enemy {
 class Player {
 	// Player constructor
 	constructor() {
+		this.ready = false;
 		this.x = 202;
 		this.y = 380;
 		this.sprite = 'images/char-boy.png';
@@ -48,10 +49,12 @@ class Player {
 	}
 	handleInput(key) {
 		if (key != undefined ) {
-			if(key === "up" && this.y > 0) this.y -= 83;
+			if(key === "up" && this.y > 0 && this.ready) this.y -= 83;
 			else if (key === "down" && this.y < 380) this.y += 83;
 			else if (key === "left" && this.x > 0) this.x -= 101;
 			else if (key === "right" && this.x < 400) this.x += 101;
+
+			if(!this.ready && key === "space") this.ready = true;
 		}
 	}
 }
@@ -65,6 +68,61 @@ class Game {
 	}
 	render() {
 
+	}
+	renderMenu() {
+		// set text overlay
+		ctx.font = "45px Arial";
+		// drawn game tutorial
+		// white text for background
+		ctx.fillStyle = "white";
+		// collect info
+		ctx.fillText("Collect:",40,110);
+		// to get (key)
+		ctx.fillText("To get",40,190);
+		// for end (pickup)
+		ctx.fillText("for end",250,190);
+		// and get new (character)
+		ctx.fillText("and get new ",100,270);
+		// But carefully!
+		ctx.fillText("Move with arow keys.",40,350);
+		// show how to start game
+		ctx.fillText("Press \"space\" to start!",40,520);
+
+		// red text for background
+		ctx.fillStyle = "red";
+		// info about enemy
+		ctx.fillText("Don't get hit by",40,440);
+
+		// text stroke color
+		ctx.fillStyle = "black";
+		// collect info stroke
+		ctx.strokeText("Collect:",40,110);
+		// to get (key) stroke
+		ctx.strokeText("To get",40,190);
+		// for end (pickup) stroke
+		ctx.strokeText("for end",250,190);
+		// and get new (character) stroke
+		ctx.strokeText("and get new ",100,270);
+		// But carefully! stroke
+		ctx.strokeText("Move with arow keys.",40,350);
+		// info about enemy stroke
+		ctx.strokeText("Don't get hit by",40,440);
+		// show how to start game stroke
+		ctx.strokeText("Press \"space\" to start!",40,520);
+
+		// spawn images on needed positions
+		// bug image
+		ctx.drawImage(Resources.get("images/enemy-bug.png"), 355, 311);
+		// colectable
+		ctx.drawImage(Resources.get("images/Gem Green.png"), 202, -30);
+		ctx.drawImage(Resources.get("images/Gem Orange.png"), 303, -30);
+		ctx.drawImage(Resources.get("images/Gem Blue.png"), 404, -30);
+		// key
+		ctx.drawImage(Resources.get("images/Key.png"), 155, 60);
+		// end game pickup
+		ctx.drawImage(Resources.get("images/Star.png"), 404, 60);
+		// character
+		ctx.drawImage(Resources.get("images/char-cat-girl.png"), 339, 143);
 	}
 }
 
@@ -80,6 +138,7 @@ var game = new Game();
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
 	var allowedKeys = {
+		32: 'space',
 		37: 'left',
 		38: 'up',
 		39: 'right',

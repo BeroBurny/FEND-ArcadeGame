@@ -141,6 +141,7 @@ var Engine = (function(global) {
 
 		renderEntities();
 		game.render();
+		if (!player.ready) game.renderMenu();
 	}
 
 	/* This function is called by the render function and is called on each game
