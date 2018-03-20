@@ -94,7 +94,15 @@ class Game {
 
 	}
 	render() {
+		ctx.font = "25px Arial";
+		ctx.fillText("Life:",20,45);
+		ctx.fillText("Level: " + this.level,200,45);
+		ctx.fillText("Score: " + this.score,375,45);
 
+		if(this.life >= 1) ctx.drawImage(Resources.get("images/Heart.png"), 70, 10, 30,47);
+		if(this.life >= 2) ctx.drawImage(Resources.get("images/Heart.png"), 100, 10, 30,47);
+		if(this.life === 3) ctx.drawImage(Resources.get("images/Heart.png"), 130, 10, 30,47);
+		if(this.life > 3) this.life = 0;
 	}
 	renderMenu() {
 		// set text overlay
@@ -151,6 +159,7 @@ class Game {
 		// character
 		ctx.drawImage(Resources.get("images/char-cat-girl.png"), 339, 143);
 	}
+
 	checkPlayerColision(x, y) {
 		if(player.y === y - 14) {
 			const plx = player.x + 25;

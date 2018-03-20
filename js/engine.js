@@ -139,7 +139,7 @@ var Engine = (function(global) {
 		}
 
 		renderEntities();
-		game.render();
+		if (player.ready) game.render();
 		if (!player.ready) game.renderMenu();
 	}
 
