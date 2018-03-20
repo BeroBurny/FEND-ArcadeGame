@@ -23,7 +23,7 @@ class Enemy {
 			if(this.x > -100)
 				this.x -= this.speed * dt;
 		}
-
+		game.checkPlayerColision(this.x, this.y);
 	}
 	// Draw the enemy on the screen, required method for game
 	render() {
@@ -123,6 +123,14 @@ class Game {
 		ctx.drawImage(Resources.get("images/Star.png"), 404, 60);
 		// character
 		ctx.drawImage(Resources.get("images/char-cat-girl.png"), 339, 143);
+	}
+	checkPlayerColision(x, y) {
+		if(player.y === y - 14) {
+			const plx = player.x + 25;
+			if ((x <= plx && plx <= (x + 100)) || (x <= (plx + 50) && (plx + 50) <= (x + 100))) { //
+				// colision response over here
+			}
+		}
 	}
 }
 
