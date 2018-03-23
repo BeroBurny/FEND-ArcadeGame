@@ -138,10 +138,11 @@ var Engine = (function(global) {
 			}
 		}
 
-		renderEntities();
 		if(player.ready) game.render();
+		renderEntities();
 		if(!player.alive && !game.gameOver) game.renderHit();
 		else if (game.gameOver) game.renderOver();
+		else if (game.gameWin) game.renderWin();
 		if(!player.ready) game.renderMenu();
 	}
 

@@ -68,17 +68,19 @@ class Player {
 
 	handleInput(key) {
 		if (key != undefined ) {
-			if(this.alive) {
+			if(this.alive && !game.gameWin) {
 				if(key === "up" && this.y > 0 && this.ready) this.y -= 83;
 				else if (key === "down" && this.y < 380) this.y += 83;
 				else if (key === "left" && this.x > 0) this.x -= 101;
 				else if (key === "right" && this.x < 400) this.x += 101;
 
 				if(!this.ready && key === "space") this.ready = true;
-			} else {
+
+				game.checkPlayerPickup(this.x, this.y);
+			} else if(!game.gameWin) {
 				if(key === "space" && !game.gameOver) player.respawn();
 				else if(key === "space" && game.gameOver) game.restartGame();
-			}
+			} else if(key === "space" && game.gameWin) game.nextLevel();
 		}
 	}
 
@@ -96,6 +98,13 @@ class Game {
 	constructor() {
 		this.enemyRows = [0, 0, 0, 0];
 		this.gameOver = false;
+		this.gameWin = false;
+		this.activeObject = false;
+		this.endObj = false;
+		this.objective = 0;
+		this.objSprite = "images/Gem Green.png";
+		this.rewardSptite = "images/char-cat-girl.png";
+
 		this.life = 3;
 		this.level = 1;
 		this.score = 0;
@@ -105,8 +114,9 @@ class Game {
 	update(dt) {
 		const enemys = allEnemies.length;
 		if(this.delay >= 100){
-			if(player.ready && enemys < (3 + this.level)) allEnemies.push(new Enemy());
-			else if (!player.ready  && enemys < 3) allEnemies.push(new Enemy(getRandomInt(3)));
+			if(player.ready && enemys < (3 + this.level) && !this.gameWin) allEnemies.push(new Enemy());
+			else if (!player.ready  && enemys < 3 && !this.gameWin ) allEnemies.push(new Enemy(getRandomInt(3)));
+			else if (!this.activeObject && player.ready && !this.gameWin) this.spawnObj(this.objective);
 			this.delay -= 100;
 		}
 		this.delay += dt * 200;
@@ -114,15 +124,51 @@ class Game {
 	}
 
 	render() {
-		ctx.font = "25px Arial";
-		ctx.fillText("Life:",20,45);
-		ctx.fillText("Level: " + this.level,200,45);
-		ctx.fillText("Score: " + this.score,375,45);
+		if(!game.gameWin) {
+			ctx.font = "25px Arial";
+			ctx.fillText("Life:",20,45);
+			ctx.fillText("Level: " + this.level,200,45);
+			ctx.fillText("Score: " + this.score,375,45);
 
-		if(this.life >= 1) ctx.drawImage(Resources.get("images/Heart.png"), 70, 10, 30,47);
-		if(this.life >= 2) ctx.drawImage(Resources.get("images/Heart.png"), 100, 10, 30,47);
-		if(this.life === 3) ctx.drawImage(Resources.get("images/Heart.png"), 130, 10, 30,47);
-		if(this.life > 3) this.life = 0;
+			if(this.life >= 1) ctx.drawImage(Resources.get("images/Heart.png"), 70, 10, 30,47);
+			if(this.life >= 2) ctx.drawImage(Resources.get("images/Heart.png"), 100, 10, 30,47);
+			if(this.life === 3) ctx.drawImage(Resources.get("images/Heart.png"), 130, 10, 30,47);
+			if(this.life > 3) this.life = 0;
+		}
+
+		if(this.endObj) ctx.drawImage(Resources.get("images/Selector.png"), this.objx, this.objy - 40);
+		if(this.activeObject) ctx.drawImage(Resources.get(this.objSprite), this.objx + 25, this.objy + 35, 50,79);
+	}
+	renderWin() {
+		ctx.font = "45px Arial";
+
+		// white text for background
+		ctx.fillStyle = "white";
+		// level win
+		ctx.fillText("Level " + this.level + " passed!",95,190);
+		// to get (key)
+		ctx.fillText("Bonus:",40,270);
+		// to get (key)
+		ctx.fillText("+1 on collectibles",90,350);
+		// and get new (character)
+		ctx.fillText("New character: ",90,440);
+		// show how to start game
+		ctx.fillText("Press \"space\" for next!",25,520);
+
+		// text color to black
+		ctx.fillStyle = "black";
+		// level win
+		ctx.strokeText("Level " + this.level + " passed!",95,190);
+		// to get (key)
+		ctx.strokeText("Bonus:",40,270);
+		// to get (key)
+		ctx.strokeText("+1 on collectibles",90,350);
+		// and get new (character)
+		ctx.strokeText("New character: ",90,440);
+		// show how to start game stroke
+		ctx.strokeText("Press \"space\" for next!",25,520);
+
+		ctx.drawImage(Resources.get(this.rewardSptite), 390, 311);
 	}
 
 	renderOver() {
@@ -211,15 +257,44 @@ class Game {
 		// bug image
 		ctx.drawImage(Resources.get("images/enemy-bug.png"), 355, 311);
 		// colectable
-		ctx.drawImage(Resources.get("images/Gem Green.png"), 202, -30);
-		ctx.drawImage(Resources.get("images/Gem Orange.png"), 303, -30);
-		ctx.drawImage(Resources.get("images/Gem Blue.png"), 404, -30);
+		ctx.drawImage(Resources.get("images/Gem Green.png"), 227, 40, 50, 79);
+		ctx.drawImage(Resources.get("images/Gem Orange.png"), 328, 40, 50, 79);
+		ctx.drawImage(Resources.get("images/Gem Blue.png"), 429, 40, 50, 79);
 		// key
 		ctx.drawImage(Resources.get("images/Key.png"), 155, 60);
 		// end game pickup
 		ctx.drawImage(Resources.get("images/Star.png"), 404, 60);
 		// character
-		ctx.drawImage(Resources.get("images/char-cat-girl.png"), 339, 143);
+		ctx.drawImage(Resources.get(this.rewardSptite), 339, 143);
+	}
+
+	spawnObj(objective, row = getRandomInt(3), column = getRandomInt(5)) {
+		if(objective === 0) row = getRandomInt(2);
+		if(objective === 0) this.objSprite = "images/Gem Green.png";
+		else if (objective === 1) this.objSprite = "images/Gem Orange.png";
+		else if (objective === 2) this.objSprite = "images/Gem Blue.png";
+		// console.log("Obj: " + objective + " row: " + row + " column: " + column);
+		this.objy = 83 + 83 * row;
+		this.objx = 101 * column;
+
+		if (objective === 3) {
+			this.objSprite = "images/Key.png";
+
+		} else if (objective === 4) {
+			this.objSprite = "images/Star.png";
+			this.objy = 0;
+			this.endObj = true;
+		}
+
+		this.activeObject = true;
+	}
+
+	nextLevel() {
+		this.objective = 0;
+		this.endObj = false;
+		player.respawn();
+		this.level++;
+		this.gameWin = false;
 	}
 
 	restartGame() {
@@ -231,7 +306,17 @@ class Game {
 		player.ready = false;
 	}
 
+	checkPlayerPickup(x, y)	{
+		if(this.objx === x && this.objy - 35 === y) {
+			this.objective++;
+			this.score += this.level;
+			this.activeObject = false;
+			if(this.objective === 5) this.gameWin = true;
+		}
+	}
+
 	checkPlayerColision(x, y) {
+		// check for Enemy
 		if(player.y === y - 14) {
 			const plx = player.x + 35;
 			if ((x <= plx && plx <= (x + 100)) || (x <= (plx + 30) && (plx + 30) <= (x + 100))) { //
