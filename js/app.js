@@ -125,10 +125,9 @@ class Game {
 
 	render() {
 		if(!game.gameWin) {
-			ctx.font = "25px Arial";
-			ctx.fillText("Life:",20,45);
-			ctx.fillText("Level: " + this.level,200,45);
-			ctx.fillText("Score: " + this.score,375,45);
+			this.drawnText("Life:",20,45,"black",25);
+			this.drawnText("Level: " + this.level,200,45,"black",25);
+			this.drawnText("Score: " + this.score,375,45,"black",25);
 
 			if(this.life >= 1) ctx.drawImage(Resources.get("images/Heart.png"), 70, 10, 30,47);
 			if(this.life >= 2) ctx.drawImage(Resources.get("images/Heart.png"), 100, 10, 30,47);
