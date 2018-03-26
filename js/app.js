@@ -140,132 +140,68 @@ class Game {
 		if(this.activeObject) ctx.drawImage(Resources.get(this.objSprite), this.objx + 25, this.objy + 35, 50,79);
 	}
 	renderWin() {
-		ctx.font = "45px Arial";
-
-		// white text for background
-		ctx.fillStyle = "white";
 		// level win
-		ctx.fillText("Level " + this.level + " passed!",95,190);
+		this.drawnText("Level " + this.level + " passed!",95,190);
 		// to get (key)
-		ctx.fillText("Bonus:",40,270);
+		this.drawnText("Bonus:",40,270);
 		// to get (key)
-		ctx.fillText("+1 on collectibles",90,350);
+		this.drawnText("+1 on collectibles",90,350);
 		// and get new (character)
-		ctx.fillText("New character: ",90,440);
-		// show how to start game
-		ctx.fillText("Press \"space\" for next!",25,520);
-
-		// text color to black
-		ctx.fillStyle = "black";
-		// level win
-		ctx.strokeText("Level " + this.level + " passed!",95,190);
-		// to get (key)
-		ctx.strokeText("Bonus:",40,270);
-		// to get (key)
-		ctx.strokeText("+1 on collectibles",90,350);
-		// and get new (character)
-		ctx.strokeText("New character: ",90,440);
-		// show how to start game stroke
-		ctx.strokeText("Press \"space\" for next!",25,520);
-
+		this.drawnText("New character: ",90,440);
 		ctx.drawImage(Resources.get(this.rewardSptite), 390, 311);
+		// show how to start game
+		this.drawnText("Press \"space\" for next!",25,520);
 	}
 
 	renderOver() {
-		ctx.font = "45px Arial";
-
-		// white text for background
-		ctx.fillStyle = "white";
-		// show how to start game
-		ctx.fillText("Press \"space\" to restart!",15,520);
-
-		// text color to black
-		ctx.fillStyle = "black";
 		// game ower
-		ctx.fillText("GAME OWER",115,110);
-		// show how to start game stroke
-		ctx.strokeText("Press \"space\" to restart!",15,520);
+		this.drawnText("GAME OWER",115,110,"black");
+		// show how to start game
+		this.drawnText("Press \"space\" to restart!",15,520);
 	}
 
 	renderHit() {
-		ctx.font = "45px Arial";
-		// white text for background
-		ctx.fillStyle = "white";
-		// collect info
-		ctx.fillText("You lost one!",90,130);
-		// show how to start game
-		ctx.fillText("Press \"space\" to retry!",40,520);
-
-		// red text for background
-		ctx.fillStyle = "red";
 		// info about enemy
-		ctx.fillText("Something hit you!",65,85);
-
-		// text stroke color
-		ctx.fillStyle = "black";
-		// collect info stroke
-		ctx.strokeText("Something hit you!",65,85);
-		// collect info stroke
-		ctx.strokeText("You lost one!",90,130);
-		// show how to start game stroke
-		ctx.strokeText("Press \"space\" to retry!",40,520);
+		this.drawnText("Something hit you!",65,85,"red");
+		// collect info
+		this.drawnText("You lost one!",90,130);
 		ctx.drawImage(Resources.get("images/Heart.png"), 360, 70, 50,79);
+		// show how to start game
+		this.drawnText("Press \"space\" to retry!",40,520);
 	}
 
 	renderMenu() {
-		// set text overlay
-		ctx.font = "45px Arial";
-		// drawn game tutorial
-		// white text for background
-		ctx.fillStyle = "white";
 		// collect info
-		ctx.fillText("Collect:",40,110);
-		// to get (key)
-		ctx.fillText("To get",40,190);
-		// for end (pickup)
-		ctx.fillText("for end",250,190);
-		// and get new (character)
-		ctx.fillText("and get new ",100,270);
-		// But carefully!
-		ctx.fillText("Move with arow keys.",40,350);
-		// show how to start game
-		ctx.fillText("Press \"space\" to start!",40,520);
-
-		// red text for background
-		ctx.fillStyle = "red";
-		// info about enemy
-		ctx.fillText("Don't get hit by",40,440);
-
-		// text stroke color
-		ctx.fillStyle = "black";
-		// collect info stroke
-		ctx.strokeText("Collect:",40,110);
-		// to get (key) stroke
-		ctx.strokeText("To get",40,190);
-		// for end (pickup) stroke
-		ctx.strokeText("for end",250,190);
-		// and get new (character) stroke
-		ctx.strokeText("and get new ",100,270);
-		// But carefully! stroke
-		ctx.strokeText("Move with arow keys.",40,350);
-		// info about enemy stroke
-		ctx.strokeText("Don't get hit by",40,440);
-		// show how to start game stroke
-		ctx.strokeText("Press \"space\" to start!",40,520);
-
-		// spawn images on needed positions
-		// bug image
-		ctx.drawImage(Resources.get("images/enemy-bug.png"), 355, 311);
-		// colectable
+		this.drawnText("Collect:",40,110);
 		ctx.drawImage(Resources.get("images/Gem Green.png"), 227, 40, 50, 79);
 		ctx.drawImage(Resources.get("images/Gem Orange.png"), 328, 40, 50, 79);
 		ctx.drawImage(Resources.get("images/Gem Blue.png"), 429, 40, 50, 79);
-		// key
+		// to get (key)
+		this.drawnText("To get",40,190);
 		ctx.drawImage(Resources.get("images/Key.png"), 155, 60);
-		// end game pickup
+		// for end (pickup)
+		this.drawnText("for end",250,190);
 		ctx.drawImage(Resources.get("images/Star.png"), 404, 60);
-		// character
+		// and get new (character)
+		this.drawnText("and get new ",100,270);
 		ctx.drawImage(Resources.get(this.rewardSptite), 339, 143);
+		// But carefully!
+		this.drawnText("Move with arow keys.",40,350);
+		// info about enemy
+		this.drawnText("Don't get hit by",40,440, "red");
+		ctx.drawImage(Resources.get("images/enemy-bug.png"), 355, 311);
+		// show how to start game
+		this.drawnText("Press \"space\" to start!",40,520);
+	}
+
+	drawnText(text = "-*NoTEXT*-", x = 0, y = 0, color = "white", size = 45, font = "Arial") {
+		// set text overlay
+		ctx.font = `${size}px ${font}`;
+		ctx.fillStyle = color;
+		ctx.fillText(text, x, y);
+
+		ctx.fillStyle = "black";
+		ctx.strokeText(text, x, y);
 	}
 
 	spawnObj(objective, row = getRandomInt(3), column = getRandomInt(5)) {
