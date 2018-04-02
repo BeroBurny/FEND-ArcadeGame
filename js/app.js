@@ -280,6 +280,7 @@ class Game {
 		this.level = 1;
 		this.score = 0;
 		player.ready = false;
+		this.activeObject = false;
 		this.setReward();
 	}
 
@@ -300,6 +301,7 @@ class Game {
 				if(this.life === 0) this.gameOver = true;
 				else this.life--;
 				player.alive = false;
+				this.activeObject = false;
 			}
 		}
 	}
