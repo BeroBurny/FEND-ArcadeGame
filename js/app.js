@@ -2,7 +2,8 @@
 class Enemy {
 	constructor(row = getRandomInt(4), side = getRandomInt(2), speed = getRandomInt(100)) {
 		// Limit only to 2 bugs per row
-		while(game.enemyRows[row] >= 2) {
+		while((game.level <= 5 && game.enemyRows[row] >= 2) ||
+			(game.level > 5 && game.enemyRows[row] >= 3) ) {
 			row = getRandomInt(4);
 		}
 
@@ -118,8 +119,8 @@ class Game {
 			else if (!player.ready  && enemys < 3 && !this.gameWin ) allEnemies.push(new Enemy(getRandomInt(3)));
 			else if (!this.activeObject && player.ready && !this.gameWin) this.spawnObj(this.objective);
 			this.delay -= 100;
-		}
-		this.delay += dt * 200;
+		} else if(this.level > 5) this.delay += dt * 300;
+		else this.delay += dt * 200;
 
 	}
 
