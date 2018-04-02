@@ -55,6 +55,7 @@ class Player {
 		this.alive = true;
 		this.x = 202;
 		this.y = 380;
+		this.sprite = 'images/char-boy.png';
 		this.setSkin(Number(localStorage.skin));
 		console.log("Player Created");
 	}
