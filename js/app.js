@@ -103,7 +103,7 @@ class Game {
 		this.endObj = false;
 		this.objective = 0;
 		this.objSprite = "images/Gem Green.png";
-		this.rewardSptite = "images/char-cat-girl.png";
+		this.setReward();
 
 		this.life = 3;
 		this.level = 1;
@@ -146,8 +146,10 @@ class Game {
 		// to get (key)
 		this.drawnText("+1 on collectibles",90,350);
 		// and get new (character)
-		this.drawnText("New character: ",90,440);
-		ctx.drawImage(Resources.get(this.rewardSptite), 390, 311);
+		if(localStorage.unlocks != "4") {
+			this.drawnText("New character: ",90,440);
+			ctx.drawImage(Resources.get(this.rewardSptite), 390, 311);
+		}
 		// show how to start game
 		this.drawnText("Press \"space\" for next!",25,520);
 	}
@@ -182,8 +184,10 @@ class Game {
 		this.drawnText("for end",250,190);
 		ctx.drawImage(Resources.get("images/Star.png"), 404, 60);
 		// and get new (character)
-		this.drawnText("and get new ",100,270);
-		ctx.drawImage(Resources.get(this.rewardSptite), 339, 143);
+		if(localStorage.unlocks != "4") {
+			this.drawnText("and get new ",100,270);
+			ctx.drawImage(Resources.get(this.rewardSptite), 339, 143);
+		}
 		// But carefully!
 		this.drawnText("Move with arow keys.",40,350);
 		// info about enemy
@@ -201,6 +205,29 @@ class Game {
 
 		ctx.fillStyle = "black";
 		ctx.strokeText(text, x, y);
+	}
+
+	setReward() {
+		switch (localStorage.unlocks) {
+			case "0":
+				this.rewardSptite = "images/char-cat-girl.png";
+				break;
+			case "1":
+				this.rewardSptite = "images/char-pink-girl.png";
+				break;
+			case "2":
+				this.rewardSptite = "images/char-horn-girl.png";
+				break;
+			case "3":
+				this.rewardSptite = "images/char-princess-girl.png";
+				break;
+			case "4":
+				this.rewardSptite = "images/char-boy.png";
+				break;
+			default:
+				console.log("SetReward error:", localStorage.unlocks);
+				this.rewardSptite = "images/char-boy.png";
+		}
 	}
 
 	spawnObj(objective, row = getRandomInt(3), column = getRandomInt(5)) {
@@ -230,8 +257,11 @@ class Game {
 		player.respawn();
 		this.level++;
 		this.gameWin = false;
+		if(localStorage.unlocks != "4") localStorage.unlocks = ((Number(localStorage.unlocks) + 1).toString());
+		this.setReward();
 	}
 
+	// set game state to beggining
 	restartGame() {
 		this.gameOver = false;
 		player.respawn();
@@ -241,6 +271,7 @@ class Game {
 		this.level = 1;
 		this.score = 0;
 		player.ready = false;
+		this.setReward();
 	}
 
 	checkPlayerPickup(x, y)	{
