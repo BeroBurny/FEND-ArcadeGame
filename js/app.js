@@ -159,6 +159,15 @@ class Game {
 		this.drawnText("GAME OWER",115,110,"black");
 		// show how to start game
 		this.drawnText("Press \"space\" to restart!",15,520);
+
+		if(this.score >= (Number(localStorage.topScore))) {
+			this.drawnText("NEW HIGH SCORE!",50,190);
+			localStorage.topScore = this.score.toString();
+		} else this.drawnText(`Top High Score: ${localStorage.topScore}`,60,190);
+
+		this.drawnText(`Your Score: ${this.score}`,100,270);
+
+
 	}
 
 	renderHit() {
