@@ -265,6 +265,19 @@ class Game {
 	}
 }
 
+// local storage
+if (typeof(Storage) !== "undefined") {
+	//set defaults
+	if (!localStorage.topScore) localStorage.topScore = "0";
+	if (!localStorage.unlocks) localStorage.unlocks = "0";
+} else {
+	// emulate local storage
+	this.localStorage = {
+		topScore: "0",
+		unlocks: "0"
+	}
+}
+
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
