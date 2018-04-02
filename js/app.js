@@ -181,7 +181,7 @@ class Game {
 
 	renderOver() {
 		// game ower
-		this.drawnText("GAME OWER",115,110,"black");
+		this.drawnText("GAME OVER",115,110,"black");
 		// show how to start game
 		this.drawnText("Press \"space\" to restart!",15,520);
 
