@@ -337,7 +337,7 @@ document.addEventListener('keydown', function(e) {
 		37: 'left',
 		38: 'up',
 		39: 'right',
-		40: 'down'
+		40: 'down',
 		// WASD gamer style controlling a Player
 		65: 'left',
 		87: 'up',
