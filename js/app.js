@@ -55,7 +55,7 @@ class Player {
 		this.alive = true;
 		this.x = 202;
 		this.y = 380;
-		this.sprite = 'images/char-boy.png';
+		this.setSkin(Number(localStorage.skin));
 		console.log("Player Created");
 	}
 
@@ -67,6 +67,26 @@ class Player {
 		ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 	}
 
+	setSkin(skin) {
+		if(Number(localStorage.unlocks) >= skin) localStorage.skin = skin.toString();
+		switch (skin) {
+			case 0:
+				if(Number(localStorage.unlocks) >= 3) this.sprite = 'images/char-horn-girl.png';
+				break;
+			case 1:
+				if(Number(localStorage.unlocks) >= 1) this.sprite = 'images/char-cat-girl.png';
+				break;
+			case 3:
+				if(Number(localStorage.unlocks) >= 2) this.sprite = 'images/char-pink-girl.png';
+				break;
+			case 4:
+				if(Number(localStorage.unlocks) === 4) this.sprite = 'images/char-princess-girl.png';
+				break;
+			default:
+				this.sprite = 'images/char-boy.png';
+		}
+	}
+
 	handleInput(key) {
 		if (key != undefined ) {
 			if(this.alive && !game.gameWin) {
@@ -76,6 +96,9 @@ class Player {
 				else if (key === "right" && this.x < 400) this.x += 101;
 
 				if(!this.ready && key === "space") this.ready = true;
+
+				// selecting characters
+				if (!this.ready && key === "down") this.setSkin(this.x / 101);
 
 				game.checkPlayerPickup(this.x, this.y);
 			} else if(!game.gameWin) {
@@ -205,6 +228,22 @@ class Game {
 		ctx.drawImage(Resources.get("images/enemy-bug.png"), 355, 311);
 		// show how to start game
 		this.drawnText("Press \"space\" to start!",40,520);
+
+		// diplay selectable characters
+		ctx.drawImage(Resources.get("images/char-horn-girl.png"), 20, 521, 60, 95);
+		ctx.drawImage(Resources.get("images/char-cat-girl.png"), 121, 521, 60, 95);
+		ctx.drawImage(Resources.get("images/char-boy.png"), 222, 521, 60, 95);
+		ctx.drawImage(Resources.get("images/char-pink-girl.png"), 323, 521, 60, 95);
+		ctx.drawImage(Resources.get("images/char-princess-girl.png"), 424, 521, 60, 95);
+
+		switch (localStorage.unlocks) {
+			case "0": ctx.drawImage(Resources.get("images/Rock.png"), 111, 501, 80, 110);
+			case "1": ctx.drawImage(Resources.get("images/Rock.png"), 313, 501, 80, 110);
+			case "2": ctx.drawImage(Resources.get("images/Rock.png"), 10, 501, 80, 110);
+			case "3": ctx.drawImage(Resources.get("images/Rock.png"), 414, 501, 80, 110);
+			case "4": break;
+			default: console.log("ERROR with local storage  maximum number 4");
+		}
 	}
 
 	drawnText(text = "-*NoTEXT*-", x = 0, y = 0, color = "white", size = 45, font = "Arial") {
@@ -313,11 +352,13 @@ if (typeof(Storage) !== "undefined") {
 	//set defaults
 	if (!localStorage.topScore) localStorage.topScore = "0";
 	if (!localStorage.unlocks) localStorage.unlocks = "0";
+	if (!localStorage.skin) localStorage.skin = "0";
 } else {
 	// emulate local storage
 	this.localStorage = {
 		topScore: "0",
-		unlocks: "0"
+		unlocks: "0",
+		skin: "0"
 	}
 }
 
