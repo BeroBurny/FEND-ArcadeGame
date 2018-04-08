@@ -234,7 +234,7 @@ class Game {
 			ctx.drawImage(Resources.get(this.rewardSptite), 339, 143);
 		}
 		// But carefully!
-		this.drawnText("Move with arow keys.",40,350);
+		this.drawnText("Move with arrow keys.",40,350);
 		// info about enemy
 		this.drawnText("Don't get hit by",40,440, "red");
 		ctx.drawImage(Resources.get("images/enemy-bug.png"), 355, 311);
