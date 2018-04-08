@@ -131,6 +131,7 @@ class Game {
 		this.gameOver = false;
 		this.gameWin = false;
 		this.activeObject = false;
+		this.lifePickup = false;
 		this.endObj = false;
 		this.objective = 0;
 		this.objSprite = "images/Gem Green.png";
@@ -302,6 +303,9 @@ class Game {
 		if (objective === 3) {
 			this.objSprite = "images/Key.png";
 
+		} else if((this.life != 3 && getRandomInt(4) > this.life  && getRandomInt(2) > 0 && objective != 4) ||
+				(player.swiming && objective === 4 && this.life != 3)) {
+			this.lifePickup = true;
 		} else if (objective === 4) {
 			this.objSprite = "images/Star.png";
 			this.objy = 0;
@@ -326,6 +330,7 @@ class Game {
 		this.gameOver = false;
 		player.respawn();
 		this.objective = 0;
+		this.lifePickup = false;
 		this.endObj = false;
 		this.life = 3;
 		this.level = 1;
@@ -337,7 +342,10 @@ class Game {
 
 	checkPlayerPickup(x, y)	{
 		if(this.objx === x && this.objy - 35 === y) {
-			this.objective++;
+			if(this.lifePickup){
+				this.lifePickup = false;
+				this.life++;
+			} else this.objective++;
 			this.score += this.level;
 			this.activeObject = false;
 			if(this.objective === 5) this.gameWin = true;
@@ -381,8 +389,7 @@ var allEnemies = [];
 var player = new Player();
 var game = new Game();
 
-// This listens for key presses and sends the keys to your
-// Player.handleInput() method. You don't need to modify this.
+// This listens for key presses and sends the keys to your player class
 document.addEventListener('keydown', function(e) {
 	var allowedKeys = {
 		32: 'space',
