@@ -312,6 +312,14 @@ class Game {
 			this.endObj = true;
 		}
 
+		while (!((this.objx != player.x && this.objx != player.x + 101 && this.objx != player.x -101 ) ||
+			((this.objy - 35) != player.y && (this.objy - 35) != player.y + 83 && (this.objy - 35) != player.y - 83 ) )) {
+
+			if(objective != 4) this.objy = 83 + 83 * getRandomInt(3);
+			this.objx = 101 *  getRandomInt(5);
+		}
+
+		if(this.lifePickup) this.objSprite = "images/Heart.png";
 		this.activeObject = true;
 	}
 
