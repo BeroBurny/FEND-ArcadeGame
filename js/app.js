@@ -55,6 +55,8 @@ class Player {
 		this.alive = true;
 		this.x = 202;
 		this.y = 380;
+		this.swiming = false;
+		this.inWater = 0;
 		this.sprite = 'images/char-boy.png';
 		this.setSkin(Number(localStorage.skin));
 		console.log("Player Created");
@@ -102,6 +104,9 @@ class Player {
 				if (!this.ready && key === "down") this.setSkin(this.x / 101);
 
 				game.checkPlayerPickup(this.x, this.y);
+				this.inWater = 0;
+				if(this.y === -35) this.swiming = true;
+				else  this.swiming = false;
 			} else if(!game.gameWin) {
 				if(key === "space" && !game.gameOver) player.respawn();
 				else if(key === "space" && game.gameOver) game.restartGame();
@@ -113,6 +118,7 @@ class Player {
 		this.x = 202;
 		this.y = 380;
 		this.alive = true;
+		this.swiming = false;
 		// allEnemies = [];
 		// game.enemyRows = [0, 0, 0, 0];
 	}
@@ -146,6 +152,10 @@ class Game {
 		} else if(this.level > 5) this.delay += dt * 300;
 		else this.delay += dt * 200;
 
+		if(player.swiming && !this.gameWin){
+			player.inWater += dt;
+			if(player.inWater > 0.5) player.respawn();
+		}
 	}
 
 	render() {
