@@ -138,8 +138,10 @@ var Engine = (function(global) {
 			}
 		}
 
-		if(player.ready) game.render();
+
 		renderEntities();
+		// Render different UI based on game state
+		if(player.ready) game.render();
 		if(!player.alive && !game.gameOver) game.renderHit();
 		else if (game.gameOver) game.renderOver();
 		else if (game.gameWin) game.renderWin();

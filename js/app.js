@@ -1,29 +1,28 @@
-// Enemies Class (our player must avoid)
+// Enemies Class (player must avoid)
 class Enemy {
 	constructor(row = getRandomInt(4), side = getRandomInt(2), speed = getRandomInt(100)) {
-		// Limit only to 2 bugs per row
+		// Limit only to 2 bugs per row after lvl 5  3 per row
 		while((game.level <= 5 && game.enemyRows[row] >= 2) ||
 			(game.level > 5 && game.enemyRows[row] >= 3) ) {
 			row = getRandomInt(4);
 		}
 
+		// Enemy movment
 		this.y = (row * 83) + 62; // row 62 + row * 83
 		this.leftSpawn = side === 1? true: false;
 		this.leftSpawn ? this.x = -90: this.x = 500;
 		this.speed = 100 + speed;
 
+		// managment variables
 		this.row = row;
 		game.enemyRows[row]++;
 		// The image/sprite for our enemies, based on enemy orijentation
 		this.sprite = this.leftSpawn ? 'images/enemy-bug.png': 'images/enemy-bug-left.png';
 	}
 
-	// Update the enemy's position, required method for game
-	// Parameter: dt, a time delta between ticks
+	// Update the enemy's position and checks colision
 	update(dt) {
-		// You should multiply any movement by the dt parameter
-		// which will ensure the game runs at the same speed for
-		// all computers.
+		// handle enemy moving and despawn
 		if (this.leftSpawn) {
 			if(this.x < 500)
 				this.x += this.speed * dt;
@@ -39,9 +38,11 @@ class Enemy {
 				allEnemies.splice(allEnemies.indexOf(this), 1);
 			}
 		}
+		// check colision with player
 		game.checkPlayerColision(this.x, this.y);
 	}
-	// Draw the enemy on the screen, required method for game
+
+	// Draw the enemy on the screen
 	render() {
 		ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 	}
@@ -49,27 +50,29 @@ class Enemy {
 
 // Player Class
 class Player {
-	// Player constructor
 	constructor() {
+		// player relative states in game
 		this.ready = false;
 		this.alive = true;
+
 		this.x = 202;
 		this.y = 380;
 		this.swiming = false;
-		this.inWater = 0;
+		this.inWater = 0; // timer
+
 		this.sprite = 'images/char-boy.png';
 		this.setSkin(Number(localStorage.skin));
-		console.log("Player Created");
 	}
 
 	update() {
-
 	}
 
+	// Draw player on screen
 	render() {
 		ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 	}
 
+	// check if player wanted skin is unlocked and select it.
 	setSkin(skin) {
 		if(Number(localStorage.unlocks) >= skin) localStorage.skin = skin.toString();
 		switch (skin) {
@@ -90,20 +93,25 @@ class Player {
 		}
 	}
 
+	//player input fuction
 	handleInput(key) {
 		if (key != undefined ) {
 			if(this.alive && !game.gameWin) {
+				// handle moving
 				if(key === "up" && this.y > 0 && this.ready) this.y -= 83;
 				else if (key === "down" && this.y < 380) this.y += 83;
 				else if (key === "left" && this.x > 0) this.x -= 101;
 				else if (key === "right" && this.x < 400) this.x += 101;
 
+				// remove pause when is active
 				if(!this.ready && key === "space") this.ready = true;
 
 				// selecting characters
 				if (!this.ready && key === "down") this.setSkin(this.x / 101);
 
+				//pickup handler
 				game.checkPlayerPickup(this.x, this.y);
+				// managing player water behavior
 				this.inWater = 0;
 				if(this.y === -35) this.swiming = true;
 				else  this.swiming = false;
@@ -114,29 +122,31 @@ class Player {
 		}
 	}
 
+	// respawn player in game
 	respawn() {
 		this.x = 202;
 		this.y = 380;
 		this.alive = true;
 		this.swiming = false;
-		// allEnemies = [];
-		// game.enemyRows = [0, 0, 0, 0];
 	}
 }
 
 // Game class
 class Game {
 	constructor() {
+		// use to count number of enemys inside a row
 		this.enemyRows = [0, 0, 0, 0];
+		// game state
 		this.gameOver = false;
 		this.gameWin = false;
+		// pickups state
 		this.activeObject = false;
 		this.lifePickup = false;
 		this.endObj = false;
 		this.objective = 0;
 		this.objSprite = "images/Gem Green.png";
 		this.setReward();
-
+		// player meta
 		this.life = 3;
 		this.level = 1;
 		this.score = 0;
@@ -144,6 +154,9 @@ class Game {
 	}
 
 	update(dt) {
+		/* Enemy and spawn object handler
+		. checking enemys number and if is needed spawn one
+		. if enemy cannot be sapwn check if there is any game objective if is not spawn one */
 		const enemys = allEnemies.length;
 		if(this.delay >= 100){
 			if(player.ready && enemys < (3 + this.level) && !this.gameWin) allEnemies.push(new Enemy());
@@ -153,6 +166,7 @@ class Game {
 		} else if(this.level > 5) this.delay += dt * 300;
 		else this.delay += dt * 200;
 
+		// player swiming handler
 		if(player.swiming && !this.gameWin){
 			player.inWater += dt;
 			if(player.inWater > 0.5) player.respawn();
@@ -160,6 +174,7 @@ class Game {
 	}
 
 	render() {
+		// game - Health Level Score UI
 		if(!game.gameWin) {
 			this.drawnText("Life:",20,45,"black",25);
 			this.drawnText("Level: " + this.level,200,45,"black",25);
@@ -174,26 +189,22 @@ class Game {
 		if(this.endObj) ctx.drawImage(Resources.get("images/Selector.png"), this.objx, this.objy - 40);
 		if(this.activeObject) ctx.drawImage(Resources.get(this.objSprite), this.objx + 25, this.objy + 35, 50,79);
 	}
+
+	// show level pass tect on screen
 	renderWin() {
-		// level win
 		this.drawnText("Level " + this.level + " passed!",95,190);
-		// to get (key)
 		this.drawnText("Bonus:",40,270);
-		// to get (key)
 		this.drawnText("+1 on collectibles",90,350);
-		// and get new (character)
 		if(localStorage.unlocks != "4") {
 			this.drawnText("New character: ",90,440);
 			ctx.drawImage(Resources.get(this.rewardSptite), 390, 311);
 		}
-		// show how to start game
 		this.drawnText("Press \"space\" for next!",25,520);
 	}
 
+	// show information on game score after losing all lives
 	renderOver() {
-		// game ower
 		this.drawnText("GAME OVER",115,110,"black");
-		// show how to start game
 		this.drawnText("Press \"space\" to restart!",15,520);
 
 		if(this.score >= (Number(localStorage.topScore))) {
@@ -206,39 +217,31 @@ class Game {
 
 	}
 
+	// show text when player got hit from bug
 	renderHit() {
-		// info about enemy
 		this.drawnText("Something hit you!",65,85,"red");
-		// collect info
 		this.drawnText("You lost one!",90,130);
 		ctx.drawImage(Resources.get("images/Heart.png"), 360, 70, 50,79);
-		// show how to start game
 		this.drawnText("Press \"space\" to retry!",40,520);
 	}
 
+	// diplay game tutorial and character selector
 	renderMenu() {
-		// collect info
 		this.drawnText("Collect:",40,110);
 		ctx.drawImage(Resources.get("images/Gem Green.png"), 227, 40, 50, 79);
 		ctx.drawImage(Resources.get("images/Gem Orange.png"), 328, 40, 50, 79);
 		ctx.drawImage(Resources.get("images/Gem Blue.png"), 429, 40, 50, 79);
-		// to get (key)
 		this.drawnText("To get",40,190);
 		ctx.drawImage(Resources.get("images/Key.png"), 155, 60);
-		// for end (pickup)
 		this.drawnText("for end",250,190);
 		ctx.drawImage(Resources.get("images/Star.png"), 404, 60);
-		// and get new (character)
 		if(localStorage.unlocks != "4") {
 			this.drawnText("and get new ",100,270);
 			ctx.drawImage(Resources.get(this.rewardSptite), 339, 143);
 		}
-		// But carefully!
 		this.drawnText("Move with arrow keys.",40,350);
-		// info about enemy
 		this.drawnText("Don't get hit by",40,440, "red");
 		ctx.drawImage(Resources.get("images/enemy-bug.png"), 355, 311);
-		// show how to start game
 		this.drawnText("Press \"space\" to start!",40,520);
 
 		// diplay selectable characters
@@ -258,6 +261,7 @@ class Game {
 		}
 	}
 
+	// drawn text with black outline
 	drawnText(text = "-*NoTEXT*-", x = 0, y = 0, color = "white", size = 45, font = "Arial") {
 		// set text overlay
 		ctx.font = `${size}px ${font}`;
@@ -291,6 +295,10 @@ class Game {
 		}
 	}
 
+	/* Spawn game pickups
+	. spawn game objective based on game state
+	. if player is damaged there is chance to get health pickup
+ 	. manage minimun one block space betwen pickup and a player*/
 	spawnObj(objective, row = getRandomInt(3), column = getRandomInt(5)) {
 		if(objective === 0) row = getRandomInt(2);
 		if(objective === 0) this.objSprite = "images/Gem Green.png";
@@ -302,7 +310,7 @@ class Game {
 
 		if (objective === 3) {
 			this.objSprite = "images/Key.png";
-
+		// decide if health pickup will spawn
 		} else if((this.life != 3 && getRandomInt(4) > this.life  && getRandomInt(2) > 0 && objective != 4) ||
 				(player.swiming && objective === 4 && this.life != 3)) {
 			this.lifePickup = true;
@@ -312,6 +320,7 @@ class Game {
 			this.endObj = true;
 		}
 
+		// check distance betwen player and pickup  and corect if is needed
 		while (!((this.objx != player.x && this.objx != player.x + 101 && this.objx != player.x -101 ) ||
 			((this.objy - 35) != player.y && (this.objy - 35) != player.y + 83 && (this.objy - 35) != player.y - 83 ) )) {
 
@@ -348,6 +357,7 @@ class Game {
 		this.setReward();
 	}
 
+	// check if payer pickuped a pickup
 	checkPlayerPickup(x, y)	{
 		if(this.objx === x && this.objy - 35 === y) {
 			if(this.lifePickup){
@@ -360,8 +370,8 @@ class Game {
 		}
 	}
 
+	// check if player and enemy got in touch
 	checkPlayerColision(x, y) {
-		// check for Enemy
 		if(player.y === y - 14) {
 			const plx = player.x + 35;
 			if ((x <= plx && plx <= (x + 100)) || (x <= (plx + 30) && (plx + 30) <= (x + 100))) { //
